@@ -1,12 +1,14 @@
 {
-    "name": "afancylab/basket-laravel",
-    "description": "Inventory management library",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Muhammad Mahmudul Hasan Mithu",
-            "email": "imithu@imithu.org"
-        }
-    ],
-    "require": {}
+  "name": "afancylab/basket-laravel",
+  "description": "Inventory management library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Muhammad Mahmudul Hasan Mithu",
+      "email": "imithu@imithu.org"
+    }
+  ],
+  "require": {
+    "imithu/misc-php": "^1.2"
+  }
 }
