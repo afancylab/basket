@@ -10,5 +10,12 @@
   ],
   "require": {
     "imithu/misc-php": "^1.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "Basket\\": [
+        "Basket/"
+      ]
+    }
   }
 }
