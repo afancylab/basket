@@ -1,18 +1,6 @@
-## 🔖 V1.0.0
-### 🌱 Add
-- add subscription feature
-
-
+## 🔖 V1.1.0
 ### 🌴 Update
-N/A
-
-
-### 🔥 Remove
-N/A
-
-
-### 🐛 Fix
-N/A
+- add unique subscription feature & increase security (Basket\Seller\Product\Subscription::add)
 
 
 ### Thank you very much
