@@ -20,7 +20,7 @@ class Subscription
    * 
    * @param string $price_initial
    * @param string $price_final
-   * @param string $currency_unit
+   * @param string $currency
    * 
    * @param int    $duration    in second
    * @param bool   $is_duration_mutable - clarify that duration is mutable or not for buyer
@@ -28,7 +28,7 @@ class Subscription
    * @return bool   true if successful otherwise false
    * 
    * @since   🌱 1.0.0
-   * @version 🌴 1.1.0
+   * @version 🌴 1.2.0
    * @author  ✍ Muhammad Mahmudul Hasan Mithu
    */
   public static function add(
@@ -39,7 +39,7 @@ class Subscription
 
     string $price_initial,
     string $price_final,
-    string $currency_unit,
+    string $currency,
 
     int    $duration,
     bool   $is_duration_mutable
@@ -51,7 +51,7 @@ class Subscription
 
     $price_initial = htmlspecialchars(trim($price_initial));
     $price_final   = htmlspecialchars(trim($price_final));
-    $currency_unit = strtoupper(htmlspecialchars(trim($currency_unit)));
+    $currency = strtoupper(htmlspecialchars(trim($currency)));
 
 
     // check unique subscription in db exists or not
@@ -71,7 +71,7 @@ class Subscription
       &&  $category
       &&  is_numeric($price_initial)
       &&  is_numeric($price_final)
-      &&  $currency_unit
+      &&  $currency
       &&  $duration>0
     ){
       $datetime = Moment::datetime();
@@ -84,7 +84,7 @@ class Subscription
           
           'price_initial'=>$price_initial,
           'price_final'=>$price_final,
-          'currency_unit'=>$currency_unit,
+          'currency'=>$currency,
 
           'duration'=>$duration,
           'is_duration_mutable'=>$is_duration_mutable,
