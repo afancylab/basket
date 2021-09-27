@@ -57,7 +57,7 @@ class Subscription
     // check unique subscription in db exists or not
     if(
       $subscription_key &&
-      DB::table('Basket_Seller_Product_Subscriptions')    // is exist ?
+      DB::table('basket_seller_product_subscriptions')    // is exist ?
          ->where('id_seller', $id_seller)
          ->where('category', $category)
          ->where('subscription_key', $subscription_key)
@@ -75,7 +75,7 @@ class Subscription
       &&  $duration>0
     ){
       $datetime = Moment::datetime();
-      DB::table('Basket_Seller_Product_Subscriptions')->insert(
+      DB::table('basket_seller_product_subscriptions')->insert(
         [
           'id_seller'=>$id_seller,
           'category'=>$category,
