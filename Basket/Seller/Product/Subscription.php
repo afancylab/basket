@@ -1,9 +1,9 @@
 <?php
+declare(strict_types=1);
 namespace Basket\Seller\Product;
 
 use Illuminate\Support\Facades\DB;
-use Misc\Network;
-use Misc\Moment;
+use Misc\{Moment, Network};
 
 
 class Subscription
@@ -14,18 +14,15 @@ class Subscription
    * add subscription
    * 
    * @param int    $id_seller
-   * @param string $category
    * @param string $subscription_key    for unique subscription
    * @param string $subscription_name
    * 
    * @param string $price_initial
    * @param string $price_final
    * @param string $currency
-   * 
    * @param int    $duration    in second
-   * @param bool   $is_duration_mutable - clarify that duration is mutable or not for buyer
    * 
-   * @return bool   true if successful otherwise false
+   * @return int   0 if fail otherwise >0 which is the id of seller subscription
    * 
    * @since   🌱 1.0.0
    * @version 🌴 1.2.0
@@ -33,72 +30,54 @@ class Subscription
    */
   public static function add(
     int    $id_seller,
-    string $category,
-    string $subscription_key=null,
+    string $subscription_key,
     string $subscription_name=null,
 
     string $price_initial,
     string $price_final,
     string $currency,
 
-    int    $duration,
-    bool   $is_duration_mutable
-  ):bool
+    int    $duration
+  ): int
   {
-    $category          = htmlspecialchars(trim($category));
-    $subscription_key  = $subscription_key  ? htmlspecialchars(trim($subscription_key))  : null;
+    $subscription_key  = htmlspecialchars(trim($subscription_key));
     $subscription_name = $subscription_name ? htmlspecialchars(trim($subscription_name)) : null;
 
     $price_initial = htmlspecialchars(trim($price_initial));
     $price_final   = htmlspecialchars(trim($price_final));
-    $currency = strtoupper(htmlspecialchars(trim($currency)));
-
-
-    // check unique subscription in db exists or not
-    if(
-      $subscription_key &&
-      DB::table('basket_seller_product_subscriptions')    // is exist ?
-         ->where('id_seller', $id_seller)
-         ->where('category', $category)
-         ->where('subscription_key', $subscription_key)
-         ->exists()
-    )
-    return false;
-
+    $currency      = htmlspecialchars(strtoupper(trim($currency)));
 
     if(
           $id_seller>0
-      &&  $category
+      &&  $subscription_key
+      &&  !DB::table('basket_seller_product_subscriptions') // Check if this subscription is unique or not
+             ->where('id_seller', $id_seller)
+             ->where('subscription_key', $subscription_key)
+             ->exists()
       &&  is_numeric($price_initial)
       &&  is_numeric($price_final)
       &&  $currency
       &&  $duration>0
     ){
       $datetime = Moment::datetime();
-      DB::table('basket_seller_product_subscriptions')->insert(
-        [
-          'id_seller'=>$id_seller,
-          'category'=>$category,
-          'subscription_key'=>$subscription_key,
-          'subscription_name'=>$subscription_name,
-          
-          'price_initial'=>$price_initial,
-          'price_final'=>$price_final,
-          'currency'=>$currency,
+      return DB::table('basket_seller_product_subscriptions')->insertGetId([
+        'id_seller'=>$id_seller,
+        'subscription_key'=>$subscription_key,
+        'subscription_name'=>$subscription_name,
+        
+        'price_initial'=>$price_initial,
+        'price_final'=>$price_final,
+        'currency'=>$currency,
 
-          'duration'=>$duration,
-          'is_duration_mutable'=>$is_duration_mutable,
-          'status'=>'active',
-          'created_at'=>$datetime,
-          'updated_at'=>$datetime,
-          'ip'=>json_encode(Network::ip())
-        ]
-      );
-      return true;
+        'duration'=>$duration,
+        'status'=>'active',
+        'created_at'=>$datetime,
+        'updated_at'=>$datetime,
+        'ip'=>json_encode(Network::ip())
+      ]);
     }
 
-
-    return false;
+    return 0;
   }
 
 
