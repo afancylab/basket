@@ -13,25 +13,24 @@ class Subscription
   /**
    * add subscription
    * 
+   * |____________________________________________________________________________
    * @param int    $id_seller
    * @param string $subscription_key    for unique subscription
-   * @param string $subscription_name
    * 
    * @param string $price_initial
    * @param string $price_final
    * @param string $currency
    * @param int    $duration    in second
-   * 
+   * _____________________________________________________________________________/
    * @return int   0 if fail otherwise >0 which is the id of seller subscription
    * 
    * @since   🌱 1.0.0
-   * @version 🌴 1.2.0
+   * @version 🌴 1.3.0
    * @author  ✍ Muhammad Mahmudul Hasan Mithu
    */
   public static function add(
     int    $id_seller,
     string $subscription_key,
-    string $subscription_name=null,
 
     string $price_initial,
     string $price_final,
@@ -41,7 +40,6 @@ class Subscription
   ): int
   {
     $subscription_key  = htmlspecialchars(trim($subscription_key));
-    $subscription_name = $subscription_name ? htmlspecialchars(trim($subscription_name)) : null;
 
     $price_initial = htmlspecialchars(trim($price_initial));
     $price_final   = htmlspecialchars(trim($price_final));
@@ -63,7 +61,6 @@ class Subscription
       return DB::table('basket_seller_product_subscriptions')->insertGetId([
         'id_seller'=>$id_seller,
         'subscription_key'=>$subscription_key,
-        'subscription_name'=>$subscription_name,
         
         'price_initial'=>$price_initial,
         'price_final'=>$price_final,
