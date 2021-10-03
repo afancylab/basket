@@ -1,3 +1,11 @@
+## 🔖 V1.4.0
+### 🌱 Add
+- in Basket\Seller\Product\Subscription, add get_subscription_id method
+
+
+---
+
+
 ## 🔖 V1.3.0
 ### 🌱 Add
 - (Basket\Buyer\Product\Subscription) add update_term method

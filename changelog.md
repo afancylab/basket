@@ -1,14 +1,6 @@
-## 🔖 V1.3.0
+## 🔖 V1.4.0
 ### 🌱 Add
-- (Basket\Buyer\Product\Subscription) add update_term method
-
-
-### 🌴 Update
-- (Basket\Buyer\Product\Subscription::add) add optional term parameter
-
-
-### 🔥 Remove
-- (Basket\Seller\Product\Subscription::add) subscription name feature
+- in Basket\Seller\Product\Subscription, add get_subscription_id method
 
 
 ### Thank you very much
