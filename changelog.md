@@ -1,15 +1,14 @@
-## 🔖 V1.2.0
+## 🔖 V1.3.0
 ### 🌱 Add
-- (Basket\Buyer\Product\Subscription) add buyer subscription class
+- (Basket\Buyer\Product\Subscription) add update_term method
 
 
 ### 🌴 Update
-- (Basket\Seller\Product\Subscription::add) rename currency_unit to currency and also add the new table name
-- (Basket\Seller\Product\Subscription::add) method will return 0 or the subscription id instead of boolean
+- (Basket\Buyer\Product\Subscription::add) add optional term parameter
 
 
 ### 🔥 Remove
-- (Basket\Seller\Product\Subscription::add) category and dynamic duration mutable feature
+- (Basket\Seller\Product\Subscription::add) subscription name feature
 
 
 ### Thank you very much
