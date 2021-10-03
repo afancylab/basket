@@ -78,4 +78,28 @@ class Subscription
   }
 
 
+  /**
+   * get subscription id
+   * 
+   * @param int    $id_seller
+   * @param string $subscription_key
+   * 
+   * @return int   0 if fail otherwise >0 which is the subscription id
+   * 
+   * @since   🌱 1.4.0
+   * @version 🌴 1.4.0
+   * @author  ✍ Muhammad Mahmudul Hasan Mithu
+   */
+  public static function get_subscription_id(int $id_seller, string $subscription_key): int
+  {
+    $subscription_key = htmlspecialchars(trim($subscription_key));
+
+    return (int)
+    DB::table('basket_seller_product_subscriptions')
+      ->where('id_seller', $id_seller)
+      ->where('subscription_key', $subscription_key)
+      ->value('id') ?? 0;
+  }
+
+
 }
