@@ -21,7 +21,7 @@ class Subscription
    * @return int 0 if fail otherwise >0 which is the id of buyer subscription
    * 
    * @since   🌱 1.2.0
-   * @version 🌴 1.3.0
+   * @version 🌴 1.5.0
    * @author  ✍ Muhammad Mahmudul Hasan Mithu
    */
   public static function add(int $id_buyer, int $id_seller_subscription, int $term=1): int
@@ -31,10 +31,14 @@ class Subscription
       $seller_subscription &&
       $term>0 &&
       !DB::table('basket_buyer_product_subscriptions')  // If the buyer does not have a pending or active subscription
-        ->where('id_buyer', $id_buyer)
-        ->where('id_seller_subscription', $id_seller_subscription)
-        ->where('status', 'pending')
-        ->orWhere('status', 'active')
+        ->where([
+          ['id_buyer', '=', $id_buyer],
+          ['id_seller_subscription', '=', $id_seller_subscription],
+        ])
+        ->where(function($query){
+          $query->orWhere('status', '=', 'pending')
+                ->orWhere('status', '=', 'active');
+        })
         ->exists()
     ){
       // find out validity period and current datetime
