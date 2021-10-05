@@ -1,3 +1,11 @@
+## 🔖 V1.5.0
+### 🐛 Fix
+- in Basket\Buyer\Product\Subscription::add, fix unexpected query
+
+
+---
+
+
 ## 🔖 V1.4.0
 ### 🌱 Add
 - in Basket\Seller\Product\Subscription, add get_subscription_id method
