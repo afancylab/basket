@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Basket\Buyer\Product;
+namespace Basket\Buyer;
 
 use DateTime, DateTimeZone, DateInterval;
 use Illuminate\Support\Facades\DB;

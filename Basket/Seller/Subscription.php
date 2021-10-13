@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Basket\Seller\Product;
+namespace Basket\Seller;
 
 use Illuminate\Support\Facades\DB;
 use Misc\{Moment, Network};
