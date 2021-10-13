@@ -97,16 +97,16 @@ class Subscription
     // if the pending subscription exists then collect the proper data
     if(
       $subscription =
-      DB::table('basket_buyer_subscriptions')
-        ->join('basket_seller_subscriptions', 'basket_buyer_subscriptions.seller_subscription_id', '=', 'basket_seller_subscriptions.id')
-        ->where('basket_buyer_subscriptions.id', $subscription_id)
-        ->where('basket_buyer_subscriptions.status', 'pending')
-        ->addSelect(['basket_buyer_subscriptions.term'])
+      DB::table('basket_buyer_subscriptions as bs')
+        ->join('basket_seller_subscriptions as ss', 'bs.seller_subscription_id', '=', 'ss.id')
+        ->where('bs.id', $subscription_id)
+        ->where('bs.status', 'pending')
+        ->addSelect(['bs.term'])
         ->addSelect([
-          'basket_seller_subscriptions.initial_price',
-          'basket_seller_subscriptions.final_price',
-          'basket_seller_subscriptions.currency',
-          'basket_seller_subscriptions.duration'
+          'ss.initial_price',
+          'ss.final_price',
+          'ss.currency',
+          'ss.duration'
         ])
         ->get()[0] ?? false
     ){
@@ -165,18 +165,18 @@ class Subscription
   {
     $subscription_key = htmlspecialchars(trim($subscription_key));
     $buyer_subscription =
-    DB::table('basket_buyer_subscriptions')
-      ->join('basket_seller_subscriptions', 'basket_buyer_subscriptions.seller_subscription_id', '=', 'basket_seller_subscriptions.id')
-      ->where('basket_buyer_subscriptions.buyer_id', $buyer_id)
-      ->where('basket_buyer_subscriptions.status', 'active')
-      ->where('basket_seller_subscriptions.seller_id', $seller_id)
-      ->where('basket_seller_subscriptions.subscription_key', $subscription_key)
-      ->orderBy('basket_buyer_subscriptions.id', 'desc')
+    DB::table('basket_buyer_subscriptions as bs')
+      ->join('basket_seller_subscriptions as ss', 'bs.seller_subscription_id', '=', 'ss.id')
+      ->where('bs.buyer_id', $buyer_id)
+      ->where('bs.status', 'active')
+      ->where('ss.seller_id', $seller_id)
+      ->where('ss.subscription_key', $subscription_key)
+      ->orderBy('bs.id', 'desc')
       ->addSelect([
-        'basket_buyer_subscriptions.id',
-        'basket_buyer_subscriptions.valid_from',
-        'basket_buyer_subscriptions.valid_upto',
-        'basket_buyer_subscriptions.valid_upto',
+        'bs.id',
+        'bs.valid_from',
+        'bs.valid_upto',
+        'bs.valid_upto',
       ])
       ->get()[0] ?? false;
     if($buyer_subscription){
