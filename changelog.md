@@ -1,6 +1,9 @@
-## 🔖 V1.5.0
-### 🐛 Fix
-- in Basket\Buyer\Product\Subscription::add, fix unexpected query
+## 🔖 V1.6.0
+### 🌴 Update
+- better folder structure
+- better table name
+- better column and variable names
+- optimize code
 
 
 ### Thank you very much
