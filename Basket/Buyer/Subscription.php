@@ -14,8 +14,8 @@ class Subscription
   /**
    * add subscription
    * 
-   * @param int $id_buyer
-   * @param int $id_seller_subscription
+   * @param int $buyer_id
+   * @param int $seller_subscription_id
    * @param int $term  default is 1
    * 
    * @return int 0 if fail otherwise >0 which is the id of buyer subscription
@@ -24,16 +24,16 @@ class Subscription
    * @version 🌴 1.6.0
    * @author  ✍ Muhammad Mahmudul Hasan Mithu
    */
-  public static function add(int $id_buyer, int $id_seller_subscription, int $term=1): int
+  public static function add(int $buyer_id, int $seller_subscription_id, int $term=1): int
   {
-    $seller_subscription = DB::table('basket_seller_subscriptions')->where('id', $id_seller_subscription)->get()[0] ?? false;
+    $seller_subscription = DB::table('basket_seller_subscriptions')->where('id', $seller_subscription_id)->get()[0] ?? false;
     if(
       $seller_subscription &&
       $term>0 &&
       !DB::table('basket_buyer_subscriptions')  // If the buyer does not have a pending or active subscription
         ->where([
-          ['id_buyer', '=', $id_buyer],
-          ['id_seller_subscription', '=', $id_seller_subscription],
+          ['buyer_id', '=', $buyer_id],
+          ['seller_subscription_id', '=', $seller_subscription_id],
         ])
         ->where(function($query){
           $query->orWhere('status', '=', 'pending')
@@ -49,19 +49,19 @@ class Subscription
       $valid_upto = $valid_upto->add(new DateInterval("PT{$duration}S"))->format('Y-m-d H:i:s');
 
       // solve price
-      $price_initial = bcmul($seller_subscription->price_initial, (string) $term, 18);
-      $price_final   = bcmul($seller_subscription->price_final,   (string) $term, 18);
+      $initial_price = bcmul($seller_subscription->initial_price, (string) $term, 18);
+      $final_price   = bcmul($seller_subscription->final_price,   (string) $term, 18);
 
       // save data in db and return the id
       return
       DB::table('basket_buyer_subscriptions')
         ->insertGetId([
-          'id_buyer'=>$id_buyer,
-          'id_seller_subscription'=>$id_seller_subscription,
+          'buyer_id'=>$buyer_id,
+          'seller_subscription_id'=>$seller_subscription_id,
           'term'=>$term,
           
-          'price_initial'=>$price_initial,
-          'price_final'=>$price_final,
+          'initial_price'=>$initial_price,
+          'final_price'=>$final_price,
           'currency'=>$seller_subscription->currency,
           
           'duration'=>$duration,
@@ -83,7 +83,7 @@ class Subscription
    * update term, price, validity period of a pending subscription
    * validity period is based on current time
    * 
-   * @param int    $id_subscription
+   * @param int    $subscription_id
    * @param int    $term  default is null aka current term
    * 
    * @return bool  true if successful otherwise false
@@ -92,19 +92,19 @@ class Subscription
    * @version 🌴 1.6.0
    * @author  ✍ Muhammad Mahmudul Hasan Mithu
    */
-  public static function update_term(int $id_subscription, int $term=null): bool
+  public static function update_term(int $subscription_id, int $term=null): bool
   {
     // if the pending subscription exists then collect the proper data
     if(
       $subscription =
       DB::table('basket_buyer_subscriptions')
-        ->join('basket_seller_subscriptions', 'basket_buyer_subscriptions.id_seller_subscription', '=', 'basket_seller_subscriptions.id')
-        ->where('basket_buyer_subscriptions.id', $id_subscription)
+        ->join('basket_seller_subscriptions', 'basket_buyer_subscriptions.seller_subscription_id', '=', 'basket_seller_subscriptions.id')
+        ->where('basket_buyer_subscriptions.id', $subscription_id)
         ->where('basket_buyer_subscriptions.status', 'pending')
         ->addSelect(['basket_buyer_subscriptions.term'])
         ->addSelect([
-          'basket_seller_subscriptions.price_initial',
-          'basket_seller_subscriptions.price_final',
+          'basket_seller_subscriptions.initial_price',
+          'basket_seller_subscriptions.final_price',
           'basket_seller_subscriptions.currency',
           'basket_seller_subscriptions.duration'
         ])
@@ -121,17 +121,17 @@ class Subscription
       $valid_upto = $valid_upto->add(new DateInterval("PT{$duration}S"))->format('Y-m-d H:i:s');
 
       // solve price
-      $price_initial = bcmul($subscription->price_initial, (string) $term, 18);
-      $price_final   = bcmul($subscription->price_final,   (string) $term, 18);
+      $initial_price = bcmul($subscription->initial_price, (string) $term, 18);
+      $final_price   = bcmul($subscription->final_price,   (string) $term, 18);
 
       // update the subscription
       DB::table('basket_buyer_subscriptions')
-        ->where('id', $id_subscription)
+        ->where('id', $subscription_id)
         ->update([
           'term'=>$term,
             
-          'price_initial'=>$price_initial,
-          'price_final'=>$price_final,
+          'initial_price'=>$initial_price,
+          'final_price'=>$final_price,
           'currency'=>$subscription->currency,
           
           'duration'=>$duration,
@@ -151,8 +151,8 @@ class Subscription
   /**
    * Check to see if a buyer has subscribed
    * 
-   * @param int    $id_buyer
-   * @param int    $id_seller
+   * @param int    $buyer_id
+   * @param int    $seller_id
    * @param string $subscription_key
    * 
    * @return bool  true if subscribed otherwise false
@@ -161,15 +161,15 @@ class Subscription
    * @version 🌴 1.6.0
    * @author  ✍ Muhammad Mahmudul Hasan Mithu
    */
-  public static function subscribed( int $id_buyer, int $id_seller, string $subscription_key ): bool
+  public static function subscribed( int $buyer_id, int $seller_id, string $subscription_key ): bool
   {
     $subscription_key = htmlspecialchars(trim($subscription_key));
     $buyer_subscription =
     DB::table('basket_buyer_subscriptions')
-      ->join('basket_seller_subscriptions', 'basket_buyer_subscriptions.id_seller_subscription', '=', 'basket_seller_subscriptions.id')
-      ->where('basket_buyer_subscriptions.id_buyer', $id_buyer)
+      ->join('basket_seller_subscriptions', 'basket_buyer_subscriptions.seller_subscription_id', '=', 'basket_seller_subscriptions.id')
+      ->where('basket_buyer_subscriptions.buyer_id', $buyer_id)
       ->where('basket_buyer_subscriptions.status', 'active')
-      ->where('basket_seller_subscriptions.id_seller', $id_seller)
+      ->where('basket_seller_subscriptions.seller_id', $seller_id)
       ->where('basket_seller_subscriptions.subscription_key', $subscription_key)
       ->orderBy('basket_buyer_subscriptions.id', 'desc')
       ->addSelect([

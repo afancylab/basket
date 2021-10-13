@@ -14,11 +14,11 @@ class Subscription
    * add subscription
    * 
    * |____________________________________________________________________________
-   * @param int    $id_seller
+   * @param int    $seller_id
    * @param string $subscription_key    for unique subscription
    * 
-   * @param string $price_initial
-   * @param string $price_final
+   * @param string $initial_price
+   * @param string $final_price
    * @param string $currency
    * @param int    $duration    in second
    * _____________________________________________________________________________/
@@ -29,11 +29,11 @@ class Subscription
    * @author  ✍ Muhammad Mahmudul Hasan Mithu
    */
   public static function add(
-    int    $id_seller,
+    int    $seller_id,
     string $subscription_key,
 
-    string $price_initial,
-    string $price_final,
+    string $initial_price,
+    string $final_price,
     string $currency,
 
     int    $duration
@@ -41,29 +41,29 @@ class Subscription
   {
     $subscription_key  = htmlspecialchars(trim($subscription_key));
 
-    $price_initial = htmlspecialchars(trim($price_initial));
-    $price_final   = htmlspecialchars(trim($price_final));
+    $initial_price = htmlspecialchars(trim($initial_price));
+    $final_price   = htmlspecialchars(trim($final_price));
     $currency      = htmlspecialchars(strtoupper(trim($currency)));
 
     if(
-          $id_seller>0
+          $seller_id>0
       &&  $subscription_key
       &&  !DB::table('basket_seller_subscriptions') // Check if this subscription is unique or not
-             ->where('id_seller', $id_seller)
+             ->where('seller_id', $seller_id)
              ->where('subscription_key', $subscription_key)
              ->exists()
-      &&  is_numeric($price_initial)
-      &&  is_numeric($price_final)
+      &&  is_numeric($initial_price)
+      &&  is_numeric($final_price)
       &&  $currency
       &&  $duration>0
     ){
       $datetime = Moment::datetime();
       return DB::table('basket_seller_subscriptions')->insertGetId([
-        'id_seller'=>$id_seller,
+        'seller_id'=>$seller_id,
         'subscription_key'=>$subscription_key,
         
-        'price_initial'=>$price_initial,
-        'price_final'=>$price_final,
+        'initial_price'=>$initial_price,
+        'final_price'=>$final_price,
         'currency'=>$currency,
 
         'duration'=>$duration,
@@ -81,7 +81,7 @@ class Subscription
   /**
    * get subscription id
    * 
-   * @param int    $id_seller
+   * @param int    $seller_id
    * @param string $subscription_key
    * 
    * @return int   0 if fail otherwise >0 which is the subscription id
@@ -90,13 +90,13 @@ class Subscription
    * @version 🌴 1.6.0
    * @author  ✍ Muhammad Mahmudul Hasan Mithu
    */
-  public static function get_subscription_id(int $id_seller, string $subscription_key): int
+  public static function get_subscription_id(int $seller_id, string $subscription_key): int
   {
     $subscription_key = htmlspecialchars(trim($subscription_key));
 
     return (int)
     DB::table('basket_seller_subscriptions')
-      ->where('id_seller', $id_seller)
+      ->where('seller_id', $seller_id)
       ->where('subscription_key', $subscription_key)
       ->value('id') ?? 0;
   }
