@@ -21,16 +21,16 @@ class Subscription
    * @return int 0 if fail otherwise >0 which is the id of buyer subscription
    * 
    * @since   🌱 1.2.0
-   * @version 🌴 1.5.0
+   * @version 🌴 1.6.0
    * @author  ✍ Muhammad Mahmudul Hasan Mithu
    */
   public static function add(int $id_buyer, int $id_seller_subscription, int $term=1): int
   {
-    $seller_subscription = DB::table('basket_seller_product_subscriptions')->where('id', $id_seller_subscription)->get()[0] ?? false;
+    $seller_subscription = DB::table('basket_seller_subscriptions')->where('id', $id_seller_subscription)->get()[0] ?? false;
     if(
       $seller_subscription &&
       $term>0 &&
-      !DB::table('basket_buyer_product_subscriptions')  // If the buyer does not have a pending or active subscription
+      !DB::table('basket_buyer_subscriptions')  // If the buyer does not have a pending or active subscription
         ->where([
           ['id_buyer', '=', $id_buyer],
           ['id_seller_subscription', '=', $id_seller_subscription],
@@ -54,7 +54,7 @@ class Subscription
 
       // save data in db and return the id
       return
-      DB::table('basket_buyer_product_subscriptions')
+      DB::table('basket_buyer_subscriptions')
         ->insertGetId([
           'id_buyer'=>$id_buyer,
           'id_seller_subscription'=>$id_seller_subscription,
@@ -89,7 +89,7 @@ class Subscription
    * @return bool  true if successful otherwise false
    * 
    * @since   🌱 1.3.0
-   * @version 🌴 1.3.0
+   * @version 🌴 1.6.0
    * @author  ✍ Muhammad Mahmudul Hasan Mithu
    */
   public static function update_term(int $id_subscription, int $term=null): bool
@@ -97,16 +97,16 @@ class Subscription
     // if the pending subscription exists then collect the proper data
     if(
       $subscription =
-      DB::table('basket_buyer_product_subscriptions')
-        ->join('basket_seller_product_subscriptions', 'basket_buyer_product_subscriptions.id_seller_subscription', '=', 'basket_seller_product_subscriptions.id')
-        ->where('basket_buyer_product_subscriptions.id', $id_subscription)
-        ->where('basket_buyer_product_subscriptions.status', 'pending')
-        ->addSelect(['basket_buyer_product_subscriptions.term'])
+      DB::table('basket_buyer_subscriptions')
+        ->join('basket_seller_subscriptions', 'basket_buyer_subscriptions.id_seller_subscription', '=', 'basket_seller_subscriptions.id')
+        ->where('basket_buyer_subscriptions.id', $id_subscription)
+        ->where('basket_buyer_subscriptions.status', 'pending')
+        ->addSelect(['basket_buyer_subscriptions.term'])
         ->addSelect([
-          'basket_seller_product_subscriptions.price_initial',
-          'basket_seller_product_subscriptions.price_final',
-          'basket_seller_product_subscriptions.currency',
-          'basket_seller_product_subscriptions.duration'
+          'basket_seller_subscriptions.price_initial',
+          'basket_seller_subscriptions.price_final',
+          'basket_seller_subscriptions.currency',
+          'basket_seller_subscriptions.duration'
         ])
         ->get()[0] ?? false
     ){
@@ -125,7 +125,7 @@ class Subscription
       $price_final   = bcmul($subscription->price_final,   (string) $term, 18);
 
       // update the subscription
-      DB::table('basket_buyer_product_subscriptions')
+      DB::table('basket_buyer_subscriptions')
         ->where('id', $id_subscription)
         ->update([
           'term'=>$term,
@@ -158,25 +158,25 @@ class Subscription
    * @return bool  true if subscribed otherwise false
    * 
    * @since   🌱 1.2.0
-   * @version 🌴 1.3.0
+   * @version 🌴 1.6.0
    * @author  ✍ Muhammad Mahmudul Hasan Mithu
    */
   public static function subscribed( int $id_buyer, int $id_seller, string $subscription_key ): bool
   {
     $subscription_key = htmlspecialchars(trim($subscription_key));
     $buyer_subscription =
-    DB::table('basket_buyer_product_subscriptions')
-      ->join('basket_seller_product_subscriptions', 'basket_buyer_product_subscriptions.id_seller_subscription', '=', 'basket_seller_product_subscriptions.id')
-      ->where('basket_buyer_product_subscriptions.id_buyer', $id_buyer)
-      ->where('basket_buyer_product_subscriptions.status', 'active')
-      ->where('basket_seller_product_subscriptions.id_seller', $id_seller)
-      ->where('basket_seller_product_subscriptions.subscription_key', $subscription_key)
-      ->orderBy('basket_buyer_product_subscriptions.id', 'desc')
+    DB::table('basket_buyer_subscriptions')
+      ->join('basket_seller_subscriptions', 'basket_buyer_subscriptions.id_seller_subscription', '=', 'basket_seller_subscriptions.id')
+      ->where('basket_buyer_subscriptions.id_buyer', $id_buyer)
+      ->where('basket_buyer_subscriptions.status', 'active')
+      ->where('basket_seller_subscriptions.id_seller', $id_seller)
+      ->where('basket_seller_subscriptions.subscription_key', $subscription_key)
+      ->orderBy('basket_buyer_subscriptions.id', 'desc')
       ->addSelect([
-        'basket_buyer_product_subscriptions.id',
-        'basket_buyer_product_subscriptions.valid_from',
-        'basket_buyer_product_subscriptions.valid_upto',
-        'basket_buyer_product_subscriptions.valid_upto',
+        'basket_buyer_subscriptions.id',
+        'basket_buyer_subscriptions.valid_from',
+        'basket_buyer_subscriptions.valid_upto',
+        'basket_buyer_subscriptions.valid_upto',
       ])
       ->get()[0] ?? false;
     if($buyer_subscription){
@@ -184,7 +184,7 @@ class Subscription
       if($datetime>=$buyer_subscription->valid_from && $datetime<=$buyer_subscription->valid_upto){
         return true;
       }elseif($datetime>$buyer_subscription->valid_upto){
-        DB::table('basket_buyer_product_subscriptions')
+        DB::table('basket_buyer_subscriptions')
           ->where('id', $buyer_subscription->id)
           ->update([
             'status'=>'done',

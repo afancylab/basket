@@ -25,7 +25,7 @@ class Subscription
    * @return int   0 if fail otherwise >0 which is the id of seller subscription
    * 
    * @since   🌱 1.0.0
-   * @version 🌴 1.3.0
+   * @version 🌴 1.6.0
    * @author  ✍ Muhammad Mahmudul Hasan Mithu
    */
   public static function add(
@@ -48,7 +48,7 @@ class Subscription
     if(
           $id_seller>0
       &&  $subscription_key
-      &&  !DB::table('basket_seller_product_subscriptions') // Check if this subscription is unique or not
+      &&  !DB::table('basket_seller_subscriptions') // Check if this subscription is unique or not
              ->where('id_seller', $id_seller)
              ->where('subscription_key', $subscription_key)
              ->exists()
@@ -58,7 +58,7 @@ class Subscription
       &&  $duration>0
     ){
       $datetime = Moment::datetime();
-      return DB::table('basket_seller_product_subscriptions')->insertGetId([
+      return DB::table('basket_seller_subscriptions')->insertGetId([
         'id_seller'=>$id_seller,
         'subscription_key'=>$subscription_key,
         
@@ -87,7 +87,7 @@ class Subscription
    * @return int   0 if fail otherwise >0 which is the subscription id
    * 
    * @since   🌱 1.4.0
-   * @version 🌴 1.4.0
+   * @version 🌴 1.6.0
    * @author  ✍ Muhammad Mahmudul Hasan Mithu
    */
   public static function get_subscription_id(int $id_seller, string $subscription_key): int
@@ -95,7 +95,7 @@ class Subscription
     $subscription_key = htmlspecialchars(trim($subscription_key));
 
     return (int)
-    DB::table('basket_seller_product_subscriptions')
+    DB::table('basket_seller_subscriptions')
       ->where('id_seller', $id_seller)
       ->where('subscription_key', $subscription_key)
       ->value('id') ?? 0;
