@@ -1,3 +1,12 @@
+## 🔖 V1.7.0
+### 🌱 Add
+- Cart class
+- afancylab/sin
+
+
+---
+
+
 ## 🔖 V1.6.0
 ### 🌴 Update
 - better folder structure

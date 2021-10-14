@@ -1,9 +1,7 @@
-## 🔖 V1.6.0
-### 🌴 Update
-- better folder structure
-- better table name
-- better column and variable names
-- optimize code
+## 🔖 V1.7.0
+### 🌱 Add
+- Cart class
+- afancylab/sin
 
 
 ### Thank you very much
