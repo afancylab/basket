@@ -9,7 +9,8 @@
     }
   ],
   "require": {
-    "imithu/misc-php": "^1.2"
+    "imithu/misc-php": "^1.2",
+    "afancylab/sin": "^1.3"
   },
   "autoload": {
     "psr-4": {
