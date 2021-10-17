@@ -1,7 +1,7 @@
-## 🔖 V1.7.0
+## 🔖 V1.8.0
 ### 🌱 Add
-- Cart class
-- afancylab/sin
+- seller stream class
+- buyer stream class
 
 
 ### Thank you very much

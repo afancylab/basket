@@ -1,3 +1,12 @@
+## 🔖 V1.8.0
+### 🌱 Add
+- seller stream class
+- buyer stream class
+
+
+---
+
+
 ## 🔖 V1.7.0
 ### 🌱 Add
 - Cart class
