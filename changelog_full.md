@@ -1,3 +1,11 @@
+## 🔖 V1.8.1
+### 🌴 Update
+- sin package
+
+
+---
+
+
 ## 🔖 V1.8.0
 ### 🌱 Add
 - seller stream class
